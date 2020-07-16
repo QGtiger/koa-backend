@@ -11,6 +11,12 @@
         object-fit: cover;
       }
     </style>
+    <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
+    <script>
+      // 初始化
+      var vConsole = new VConsole();
+      console.log('Hello world');
+    </script>
   </head>
   <body>
     <div class="root">
@@ -35,6 +41,7 @@
         var currentSrc = $this.attr('src')
         var parentNode = $this.parent();
         if(currentSrc && !parentNode.attr('href')) {
+          console.log(wx)
           wx.previewImage({
             current: currentSrc,
             urls: imgList
