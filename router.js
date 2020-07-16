@@ -16,8 +16,8 @@ function addMapping(router, mapping) {
   }
 }
 
-function addControllers(router) {
-  var files = fs.readdirSync(__dirname + '/controllers');
+function addControllers(router, controller_dir) {
+  var files = fs.readdirSync(__dirname + '/'+controller_dir);
   var js_files = files.filter((f) => {
       return f.endsWith('.js');
   });

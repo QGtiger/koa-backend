@@ -4,22 +4,25 @@
   "description": "hello koa",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon cross-env NODE_ENV=test node app.js"
+    "start": "export NODE_ENV='test' && nodemon node app.js"
   },
   "author": "lightfish",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.2",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
+    "koa-log4": "^2.3.2",
+    "koa-logger": "^3.2.1",
     "koa-router": "^9.1.0",
     "koa2-cors": "^2.0.6",
+    "moment": "^2.27.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.1.0",
     "nodemon": "^2.0.4",
     "sequelize": "^6.3.3"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
     "node-uuid": "^1.4.8"
   }
 }
