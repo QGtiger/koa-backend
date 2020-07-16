@@ -14,6 +14,15 @@ const logger = KoaLogger((str) => {                // 使用日志中间件
 })
 app.use(logger)
 
+const Swig = require('koa-swig')
+const co = require('co')
+app.context.render = co.wrap(Swig({
+  root: __dirname + '/views',
+  autoescape: true,
+  cache: false,
+  ext: 'html'
+}))
+
 const {  accessLogger,systemLogger, } = require('./middlewares/log/index');
 app.use(accessLogger()); //中间件
 app.on('error', err => {logger.error(err); });

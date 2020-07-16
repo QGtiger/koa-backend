@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>weinxin previewimage</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1.0, minimun-scale=1.0">
+    <style>
+      img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="root">
+      <img src="http://qnpic.top/yoona2.jpg" alt="">
+      <img src="http://qnpic.top/yoona3.jpg" alt="">
+      <img src="http://qnpic.top/yoona4.jpg" alt="">
+      <img src="http://qnpic.top/yoona5.jpg" alt="">
+      <img src="http://qnpic.top/yoona3.jpg" alt="">
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script>
+      var imgList = []
+      $('img').each(function(index, el){
+        imgList.push(el.getAttribute('src'))
+      })
+      console.log(imgList)
+      $('html').on('click', 'img', function(e){
+        console.log($(this))
+        $this = $(this)
+        var imgList = []
+        var currentSrc = $this.attr('src')
+        var parentNode = $this.parent();
+        if(currentSrc && !parentNode.attr('href')) {
+          wx.previewImage({
+            current: currentSrc,
+            urls: imgList
+          })
+        }
+      })
+    </script>
+  </body>
+</html>
