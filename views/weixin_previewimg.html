@@ -37,11 +37,11 @@
       $('html').on('click', 'img', function(e){
         console.log($(this))
         $this = $(this)
-        var imgList = []
         var currentSrc = $this.attr('src')
         var parentNode = $this.parent();
         if(currentSrc && !parentNode.attr('href')) {
           console.log(wx)
+          console.log(currentSrc, imgList)
           wx.previewImage({
             current: currentSrc,
             urls: imgList
