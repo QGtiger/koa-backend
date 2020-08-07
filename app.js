@@ -3,15 +3,19 @@ const bodyParser = require('koa-bodyparser')
 const router = require('./router')
 const Moment = require('moment')
 const models = require('./models')
-var cors = require('koa2-cors');
-models.sync()
+models.sync({force: true})
 const app = new Koa()
+
+var cors = require('koa2-cors');
 app.use(cors())
 
 const KoaLogger = require('koa-logger')
 const logger = KoaLogger((str) => {                // 使用日志中间件
   console.log(Moment().format('YYYY-MM-DD HH:mm:ss')+str);
 })
+logger.error = (err) => {
+  console.log(Moment().format('YYYY-MM-DD HH:mm:ss ')+err)
+}
 app.use(logger)
 
 const Swig = require('koa-swig')
@@ -27,23 +31,29 @@ const {  accessLogger,systemLogger, } = require('./middlewares/log/index');
 app.use(accessLogger()); //中间件
 app.on('error', err => {logger.error(err); });
 
-// app.use(async (ctx, next) => {
-//   console.log(`${ctx.request.method} ${ctx.request.url}`)
-//   await next()
-// })
-
-
-// app.use(async (ctx, next) => {
-//   const start = new Date().getTime();
-//   await next()
-//   const ms = new Date().getTime() - start; //耗费时间
-//   console.log(`Time: ${ms}ms`)
-// })
+const jwtKoa = require('koa-jwt')
+const jwtverify = require('./middlewares/jwterror')
+const secret = require('./config/secret')
+app.use(jwtverify())
+app.use(
+  jwtKoa({secret: secret.sign}).unless({
+    path: [/^\/signin/, /^\/signup/]
+  })
+)
+app.use(async (ctx, next) => {
+  await next()
+})
 
 // 注意这里的 bodyParser一定要在router之前
 app.use(bodyParser())
 
 app.use(router())
+
+app.use(async (ctx, next) => {
+  console.log(ctx)
+  await next()
+})
+
 
 app.listen(3000, function() {
   console.log('app started at port 3000')

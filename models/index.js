@@ -17,6 +17,6 @@ for (let f of js_files) {
     module.exports[name] = require(__dirname + '/utils/' + f);
 }
 
-module.exports.sync = () => {
-    db.sync();
+module.exports.sync = (config) => {
+    db.sync(config);
 };

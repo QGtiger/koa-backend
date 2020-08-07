@@ -3,7 +3,7 @@ const config = require('../config')
 const uuid = require('node-uuid');
 
 function generateId() {
-  return uuid.v4();
+  return uuid.v1();
 }
 
 console.log('init sequelize...')
@@ -75,15 +75,15 @@ function defineModel(name, attributes) {
 const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DOUBLE', 'DATEONLY', 'BOOLEAN'];
 
 var exp = {
-    defineModel: defineModel,
-    sync: () => {
-        // only allow create ddl in non-production environment:
-        if (process.env.NODE_ENV !== 'production') {
-            sequelize.sync({ force: true });
-        } else {
-            throw new Error('Cannot sync() when NODE_ENV is set to \'production\'.');
-        }
+  defineModel: defineModel,
+  sync: (configSync) => {
+    // only allow create ddl in non-production environment:
+    if (process.env.NODE_ENV !== 'production') {
+        sequelize.sync(config);
+    } else {
+        throw new Error('Cannot sync() when NODE_ENV is set to \'production\'.');
     }
+  }
 };
 
 for (let type of TYPES) {
