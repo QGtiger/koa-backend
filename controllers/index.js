@@ -22,22 +22,16 @@ var fn_signin = async (ctx, next) => {
       passwd: password
     }
   })
-  ctx.response.body = {
-    code:0,
-    data: user,
-    isNewRecord: user[0]
-  }
   if(user.length>0){
     ctx.response.body = {
       code:0,
-      isNewRecord: user[0],
       data: {
         username: name,
         id: user[0].id,
         token: 'Bearer '+jwt.sign({name, id: user.id}, secret.sign, {expiresIn: '1m'})
       }
     }
-  }else {
+  } else {
     ctx.response.body = {
       code: 1,
       msg: '账号或者密码错误'

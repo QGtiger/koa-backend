@@ -37,7 +37,7 @@ const secret = require('./config/secret')
 app.use(jwtverify())
 app.use(
   jwtKoa({secret: secret.sign}).unless({
-    path: [/^\/signin/, /^\/signup/]
+    path: [/^\/signin/, /^\/signup/, /^\/view\/.*/]
   })
 )
 app.use(async (ctx, next) => {
