@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>评论</title>
+  <style>
+    /* 评论组件 */
+    .bottom_commment_cont {
+      margin-top: 20px;
+      padding: 10px 0px 40px 15px;
+    }
+
+    .bottom_commment_cont .tab_header_cont {
+      display: flex;
+
+    }
+
+    .bottom_commment_cont .tab_header_cont .tab_item_cont:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    .bottom_commment_cont .tab_header_cont .tab_item_cont {
+      padding: 5px 0;
+      color: #999;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .bottom_commment_cont .tab_header_cont .tab_item_cont.active {
+      color: #222;
+      position: relative;
+    }
+
+    .bottom_commment_cont .tab_header_cont .tab_item_cont.active::after {
+      content: '';
+      width: 60%;
+      height: 4px;
+      border-radius: 5px;
+      background-color: rgba(170, 95, 187, 1);
+      position: absolute;
+      top: 100%;
+      left: 20%;
+    }
+
+    .tab_body_cont {
+      margin-top: 10px;
+    }
+
+    .comment_item_cont {
+      display: flex;
+      padding: 10px 0;
+    }
+
+    .comment_item_cont .left_avator {
+      width: 40px;
+    }
+
+    .comment_item_cont .left_avator .show_avator_box {
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      overflow: hidden;
+      box-shadow: 0 0 6px #ccc;
+    }
+
+    .comment_item_cont .left_avator .show_avator_box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .right_main_comment {
+      margin-left: 10px;
+      flex-grow: 1;
+      padding-right: 15px;
+      padding-bottom: 10px;
+    }
+
+    .comment_item_cont:not(:last-child) .right_main_comment {
+
+      border-bottom: 1px solid #ccc;
+    }
+
+    .right_main_comment .user_name {
+      color: #AA5FBB;
+      font-size: 16px;
+      font-weight: 600;
+      /* line-height: 30px; */
+      padding-bottom: 5px;
+    }
+
+    .right_main_comment p.comment_text {
+      line-height: 20px;
+    }
+
+    .right_main_comment .bottom_meta {
+      /* display: flex; */
+      overflow: hidden;
+      font-size: 13px;
+      margin-top: 9px;
+    }
+
+    .right_main_comment .bottom_meta .comment_time {
+      float: left;
+      color: #999;
+    }
+
+    .right_main_comment .bottom_meta .comment_like {
+      float: right;
+      color: #999;
+    }
+
+    .right_main_comment .reply_comments_cont {
+      padding: 10px 8px;
+      background: rgba(245, 245, 245, .7);
+      margin-top: 5px;
+      border-radius: 3px;
+    }
+
+
+    .right_main_comment .reply_comments_cont .item_prefix {
+      display: inline-block;
+      color: #AA5FBB;
+    }
+
+    .right_main_comment .reply_comments_cont .reply_text {
+      display: inline;
+      color: #808080;
+    }
+
+    span.color909399 {
+      color: #909399;
+    }
+
+    .right_main_comment .reply_comments_cont .reply_comment_item {
+      padding: 2px 0;
+    }
+
+    .right_commentlike .user_name {
+      color: #303133;
+      font-size: 16px;
+      font-weight: 500;
+      padding-bottom: 0px
+    }
+
+    .right_commentlike .bottom_meta {
+      margin-top: 3px;
+    }
+
+    .fixed_bottom_meta {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 10px 0;
+      left: 0;
+      box-shadow: 0 0 6px #ccc;
+      background-color: #fff;
+      z-index: 999;
+    }
+
+    .fixed_bottom_meta .meta {
+      flex-grow: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .flex_cont {
+      display: flex;
+      width: 100%;
+    }
+
+    .fixed_bottom_meta .comment_box {
+      margin: 0 15px;
+      position: relative;
+      display: flex;
+    }
+
+    .fixed_bottom_meta .comment_box .comment_input_cont {
+      padding: 10px;
+      background: rgba(245, 245, 245, 1);
+      border-radius: 6px;
+      min-height: 60px;
+      width: calc(100% - 80px);
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+
+    .placeholder {
+      color: rgba(144, 147, 153, 1);
+      position: absolute;
+      left: 10px;
+      top: 10px;
+    }
+
+    .comment_box .comment_input_cont .comment_prefix {
+      display: inline;
+      float: left;
+    }
+
+    .comment_textarea {
+      outline: none;
+      height: 60px;
+      overflow: scroll;
+    }
+
+    .comment_box .comment_right {
+      align-self: flex-end;
+      width: 70px;
+    }
+
+    .comment_box .comment_right .submit_btn {
+      color: #AA5FBB;
+      /* text-align: center; */
+      display: inline-block;
+      margin-left: 20px;
+      padding: 5px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .mask_cont {
+      height: 100vh;
+      background: #bdbdbd78;
+      width: 100%;
+      z-index: 20;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .color999 {
+      color: #999
+    }
+
+    .colorAA5FBB {
+      color: #AA5FBB
+    }
+
+    .main {
+      top: 0;
+      left: 0;
+      bottom: 180px;
+      /*距离底部的距离为底部盒子的高度，自己也可以设置*/
+      overflow-y: scroll;
+      width: 100%;
+      -webkit-overflow-scrolling: touch
+    }
+  </style>
+  <style>
+    .full-screen-mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: #222222ab;
+}
+
+/* 登录弹窗 */
+.qg-model {
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  z-index: 1001;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px #333;
+  width: 310px;
+  box-sizing: border-box;
+}
+
+.step-cont {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all .3s ease;
+  transform: translateX(0);
+}
+
+.step-cont .step-login {
+  width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all .3s ease;
+
+}
+
+.step-cont .step-2 {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  transition: all .3s ease;
+}
+
+.identities-list {
+  margin-top: 15px;
+  max-height: 195px;
+  overflow: scroll;
+}
+
+.identities-list .identity-item{
+  display: flex;
+  height: 55px;
+  margin: 10px 0;
+}
+
+.identities-list .identity-item .left-avator {
+  width: 45px;
+  height: 45px;
+  overflow: hidden;
+  border-radius: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.identities-list .identity-item .left-avator img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.identities-list .identity-item .main-cont{
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ebebeb;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.identities-list .identity-item .main-cont .base-info {
+    margin-right: 10px;
+  max-width: 200px;
+  flex-grow: 1;
+}
+
+.identities-list .identity-item .main-cont .base-info .username{
+  font-size: 15px;
+  line-height: 25px;
+}
+
+.identities-list .identity-item .main-cont .base-info .company-name{
+  color: #808080;
+  font-size: 13px;
+}
+
+.bottom-meta {
+  margin-top: 10px;
+}
+
+.identities-list .identity-item .right-radio-item{
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.qg-radio-item .qg-radio-cont {
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  border: 1px solid rgba(220,223,230,1);
+  position: relative;
+  display: inline-block;
+}
+
+.qg-radio-item .qg-radio-cont::after{
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background-color: rgba(172,92,181,1);
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  transition: transform .15s ease-in;
+}
+
+.qg-radio-item .qg-radio-cont.is-checked{
+  border: 1px solid rgba(172,92,181,1);
+}
+
+.qg-radio-item .qg-radio-cont.is-checked::after{
+  transform: translate(-50%,-50%) scale(1);
+}
+
+.is-required {
+  color: red;
+}
+
+.qg-model .label-text {
+  padding: 10px 0 0 0;
+  color: #666666;
+}
+
+.qg-model .item-content {
+  overflow: hidden;
+}
+
+.muse-field-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  background: none;
+  border-radius: 0 0 0 0;
+  box-shadow: none;
+  display: block;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 32px;
+  color: rgba(0,0,0,.87);
+  font-family: inherit;
+  position: relative;
+}
+
+.muse-field-content {
+  display: flex;
+  align-items: center;
+}
+
+.muse-input-border-line .border-line {
+  margin: 0;
+    height: 1px;
+    border: none;
+    background-color: rgba(0,0,0,.12);
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    position: absolute;
+}
+
+.muse-input {
+  position: relative;
+  width: 160px;
+  flex-grow: 1;
+}
+
+.form-item_focus .label-text .label{
+  color: #AA5FBB
+}
+
+.error-form-item .label-text .label{
+  color: red
+}
+
+.muse-input-focus-line {
+margin: 0;
+height: 2px;
+border: none;
+position: absolute;
+left: 0;
+right: 0;
+bottom: -1px;
+background-color: #AA5FBB;
+-webkit-transform: scaleX(0);
+transform: scaleX(0);
+-webkit-transition: -webkit-transform .45s cubic-bezier(.23,1,.32,1);
+transition: -webkit-transform .45s cubic-bezier(.23,1,.32,1);
+transition: transform .45s cubic-bezier(.23,1,.32,1);
+transition: transform .45s cubic-bezier(.23,1,.32,1),-webkit-transform .45s cubic-bezier(.23,1,.32,1);
+}
+
+.error-form-item .muse-input-focus-line{
+  background-color: red;
+}
+
+.error-text {
+  color: #da0808;
+  position: absolute;
+  bottom: -18px;
+  font-size: 12px;
+}
+
+.muse-input_focus .muse-input-focus-line{
+  transform: scaleX(1);
+}
+
+.mu-form-item {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.send-code-cont {
+  margin-left: 20px;
+}
+
+.comment_mask {
+  height: 100%;
+  background-image: linear-gradient(180deg, #ffffff61 0%, #cccccc5c 100%);
+  position: fixed;
+  bottom: 0;
+  overflow: hidden;
+  width: 100%;
+  z-index: 1000;
+  background-color: transparent;
+}
+
+.fixed-bottom {
+  position: fixed;
+  width: 100%;
+  padding: 10px 0;
+  background: #fff;
+  bottom: 0;
+}
+
+.mu-button{
+  padding: 10px 40px;
+    background: rgba(255,255,255,1);
+    border-radius: 8px;
+    border: 2px solid rgba(235,238,245,1);
+    float: left;
+}
+
+.mu-button-primary{
+  padding: 10px 40px;
+    background: linear-gradient(90deg,rgba(164,82,192,1) 0%,rgba(158,128,243,1) 100%);;
+    border-radius: 8px;
+    float: right;
+    color: #fff;
+}
+
+
+.dialog-fade-enter-active ,
+.dialog-fade-leave-active {
+	animation-fill-mode: forwards;
+}
+ 
+.dialog-fade-enter-active{
+	animation-duration: .15s;
+	animation-name: anim-open;
+	animation-timing-function: cubic-bezier(0.6,0,0.4,1);
+}
+ 
+.dialog-fade-leave-active {
+	animation-duration: .3s;
+	animation-name: anim-close;
+}
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div>
+      navigator.userAgent <span class="navigatoruserAgent"></span>
+    </div>
+    <div>
+      当前地址： <span class="cureent_url"></span>
+    </div>
+    <div>
+      Code: <span class="code"></span>
+    </div>
+    <div class="container">
+      当前是 <span class="platform"></span>
+    </div>
+    <div>
+      current-platform: <span class="current-platform"></span>
+    </div>
+    <div> platform obj: <span class="platformObj"></span></div>
+  </div>
+
+
+  <div id="vue" v-cloak>
+    
+    <!-- <div class="mask_cont" v-if="isShowMask" @click="handleHiddenMask"></div> -->
+    <p>{* msg *} </p>
+    <comment-list ref="commentListComponent" :comments="commentList" :commentlikes="commentLikeList"
+      @comment="handleComment" test="213">
+    </comment-list>
+    <fixed-bottom-meta ref="fixedBottomComponent" @click-reprint="handleReprint"></fixed-bottom-meta>
+    <login-model :isshowloginmodel="isShowLoginModel" @close-model="handleCloseModel"></login-model>
+  </div>
+  <script crossorigin="anonymous" integrity="sha384-+jvb+jCJ37FkNjPyYLI3KJzQeD8pPFXUra3B/QJFqQ3txYrUPIP1eOfxK4h3cKZP"
+    src="https://lib.baomitu.com/vue/2.6.11/vue.js"></script>
+  <script>
+    Vue.directive('clickoutside', {
+      bind: function (el, binding, vnode) {
+        function documentHandler(e) {
+          if (el.contains(e.target)) {
+            return false;
+          }
+          if (binding.expression) {
+            // binding.value 执行上下文
+            binding.value(e)
+          }
+        }
+        el.__vueClickOutside__ = documentHandler;
+        document.addEventListener('click', documentHandler);
+      },
+      unbind: function () {
+        document.removeEventListener('click', el.__vueClickOutside__);
+        delete el.__vueClickOutside__;
+      }
+    })
+
+    var commentTextareaCont = {
+      template: `
+
+        <div class="comment_box">
+          <div class="placeholder" v-show="isShowPlaceHolder && reply_user == ''">写评论</div>
+<div class="comment_input_cont">
+  <div class="comment_prefix">
+    <span v-if="reply_user != ''">
+      <span class="color999">回复</span>&nbsp;<span class="colorAA5FBB">{* reply_user *}</span>: &nbsp;
+    </span>
+  </div>
+  <div class="comment_textarea" ref="commentTexteara" contenteditable="true" @input="changeText" >{* content *}</div>
+</div>
+<div class="comment_right">
+  <p class="submit_btn" @click="handleSubmitComment">发送</p>
+</div></div>
+      `,
+      props: ['value', 'reply_user'],
+      delimiters: ['{*', '*}'],
+      data() {
+        return {
+          isShowPlaceHolder: true,
+          content: this.value
+        }
+      },
+      watch: {
+        'value'() {
+          this.content = this.value
+        }
+      },
+      methods: {
+        handleSubmitComment() {
+          bus.$emit('submit-comment', this.$refs.commentTexteara.innerText)
+        },
+        handleClickOutSide() {
+          this.$emit('close-input')
+        },
+        changeText() {
+          var innerText = this.$refs.commentTexteara.innerText
+          if (this.reply_user == '') {
+            if (innerText != '') {
+              this.isShowPlaceHolder = false
+            } else {
+              this.isShowPlaceHolder = true
+            }
+
+          }
+        },
+        handleBlur() {
+          var innerText = this.$refs.commentTexteara.innerText
+          if (innerText == '') {
+            this.isShowPlaceHolder = true
+          }
+        },
+        handleFocus() {
+        }
+      }
+    }
+    var fixedBottomMeta = {
+      template: `
+      <div class="fixed_bottom_meta" :class="isShowCommentInput ?'comment_mask' : ''">
+        <div :class="isShowCommentInput ? 'fixed-bottom' : ''" v-clickoutside="handleClickOutSide">
+          <div class="flex_cont function_cont" v-show="!isShowCommentInput">
+      <div class="article_like_cont meta">
+        <div class="icon_text like_botton">
+          <i class="icon"></i>
+          <span>喜欢</span>
+        </div>
+      </div>
+
+      <div class="article_comment_cont meta" @click="handleBottomMetaClick(2)">
+        <div class="icon_text comment_botton">
+          <i class="icon"></i>
+          <span>评论</span>
+        </div>
+      </div>
+
+      <div class="article_share_cont meta">
+        <div class="icon_text share_botton">
+          <i class="icon"></i>
+          <span>分享</span>
+        </div>
+      </div>
+
+      <div class="article_reprint_cont meta" @click="handleZhuanzai">
+        <div class="icon_text reprint_botton">
+          <i class="icon"></i>
+          <span>转载</span>
+        </div>
+      </div>
+    </div>
+    <comment-input  v-show="isShowCommentInput" :reply_user="reply_user" :value="content" ref="commentInput"></comment-input>
+        </div>
+  </div>
+      `,
+      components: {
+        'comment-input': commentTextareaCont
+      },
+      data() {
+        return {
+          isShowCommentInput: false,
+          content: '',
+          reply_user: ''
+        }
+      },
+      watch: {
+        isShowCommentInput: function (val) {
+          if (val) {
+            document.getElementsByTagName('html')[0].style.overflow = 'hidden'
+            console.log(this.$refs.commentInput.$refs.commentTexteara)
+            this.$nextTick(()=>{
+              this.$refs.commentInput.$refs.commentTexteara.focus()
+            })
+            
+          } else {
+            document.getElementsByTagName('html')[0].style.overflow = 'auto'
+          }
+        }
+      },
+      methods: {
+        handleBottomMetaClick(index) {
+          if (index == 2) {
+            this.isShowCommentInput = true
+            bus.$emit('show-mask')
+          }
+        },
+        handleClickOutSide() {
+          this.content = ''
+          this.isShowCommentInput = false
+          this.$refs.commentInput.isShowPlaceHolder = true
+          this.$refs.commentInput.$refs.commentTexteara.innerText = ''
+        },
+        handleZhuanzai() {
+          this.$emit('click-reprint')
+        }
+      }
+    }
+
+    var commentListComponent = {
+      template: `
+      <div class="bottom_commment_cont">
+    <div class="qg-tab_container">
+      <div class="tab_header_cont">
+        <div class="tab_item_cont" :class="tabActive == 1 ? 'active' : ''" data-class="tab_comments_cont" @click.stop="tabClick(1)">
+          <p class="tab_item_text">评论 <span class="comments_count">0</span></p>
+        </div>
+        <div class="tab_item_cont" :class="tabActive == 2 ? 'active' : ''" data-class="tab_commentslike_cont" @click.stop="tabClick(2)">
+          <p class="tab_item_text">喜欢 <span class="comments_like_count">0</span></p>
+        </div>
+      </div>
+      <div class="tab_body_cont">
+        <div class="tab_comments_cont" v-show="tabActive == 1">
+          <div class="comments_list">
+
+            <div class="comment_item_cont" v-for="item in comments">
+              <div class="left_avator">
+                <div class="show_avator_box">
+                  <img :src="item.avator" alt="">
+                </div>
+              </div>
+              <div class="right_main_comment">
+                <p class="user_name">{* item.username *}</p>
+                <div class="main_comment_cont">
+                  <p class="comment_text" @click.stop="handleComment(1,item)">{* item.content *}
+                  </p>
+                </div>
+                <div class="reply_comments_cont" v-if="item.replyList && item.replyList.length !== 0">
+                  <div class="reply_comments_list">
+                    <div class="reply_comment_item" v-for="reply in item.replyList">
+                      <div class="item_prefix">
+                        <span v-if="reply.commented_user == item.username"><span class="reply_user">{* reply.comment_user *}</span> :</span>
+                        <span v-else> <span class="reply_user">{* reply.comment_user *}</span> <span class="color909399">回复</span> <span
+                          class="replied_user">{* reply.commented_user *}</span>: </span>
+                      </div>
+                      <div class="reply_text" @click.stop="handleComment(2,reply)">{* reply.content *}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottom_meta">
+                  <div class="comment_time">{* item.publish_time *}</div>
+                  <div class="comment_like">
+                    <p><span class="like_count">{* item.like_count *}</span>&nbsp;<i class="icon"></i></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab_commentslike_cont" v-show="tabActive == 2">
+          <div class="commentslike_list">
+            <div class="comment_item_cont" v-for="item in commentlikes">
+              <div class="left_avator">
+                <div class="show_avator_box">
+                  <img :src="item.avator" alt="">
+                </div>
+              </div>
+              <div class="right_main_comment right_commentlike">
+                <p class="user_name">{* item.username *}</p>
+                <div class="bottom_meta">
+                  <div class="comment_time">{* item.time *}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+      `,
+      props: {
+        comments: {
+          type: Array,
+          default: () => []
+        },
+        commentlikes: {
+          type: Array,
+          default: () => []
+        },
+        test: {
+          type: String
+        }
+      },
+      delimiters: ['{*', '*}'],
+      data: function () {
+        return {
+          size: 10,
+          msg: 'comment-list',
+          tabActive: 1
+        }
+      },
+      mounted() {
+        console.log('comment-list-component')
+      },
+      methods: {
+        tabClick(index) {
+          this.tabActive = index
+        },
+        handleComment(type, item) {
+          this.$emit('comment', { type, item })
+        }
+      }
+    }
+
+    var loginModel = {
+      template: `
+      <transition
+    name="dialog-fade">
+      <div class="full-screen-mask" v-show="isshowloginmodel" >
+    <div class="step-cont">
+      <div class="step-login"  @click.self="closeModel">
+        <div class="qg-model" >
+          <div class="model-body-cont">
+            <div class="login-form-cont">
+              <div class="mu-form-item"  :class="this.phoneError ? 'error-form-item' : ''">
+                <div class="item-label" :class="phone ? 'form-item_focus' : ''">
+                  <p class="label-text"><span class="label">手机</span> <span class="is-required">*</span></p>
+                </div>
+                <div class="error-text">{* this.phoneErrorText *}</div>
+                <div class="item-content muse-field-content">
+                  <div class="muse-input" :class="phone  ? 'muse-input_focus' : ''">
+                    <input type="number" v-model="phoneValue" @focus="handlefocusInput('phone')" @blur="handleblurInput('phone')" class="muse-field-input" />
+                    <div class="muse-input-border-line">
+                      <div class="border-line"></div>
+                      <div class="muse-input-focus-line"></div>
+                    </div>
+                  </div>
+                  <div class="send-code-cont">
+                    <p v-if="isRenderSendCode" class="colorAA5FBB" @click="handleSendCode">发送验证码</p>
+                    <p v-else class="color999">{* leftTime *}秒后重发</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mu-form-item"  :class="this.codeError ? 'error-form-item' : ''">
+                <div class="item-label" :class="code ? 'form-item_focus' : ''">
+                  <p class="label-text"><span class="label">验证码</span> <span class="is-required">*</span></p>
+                </div>
+                <div class="error-text">{* this.codeErrorText *}</div>
+                <div class="item-content muse-field-content">
+                  <div class="muse-input" :class="code  ? 'muse-input_focus' : ''">
+                    <input type="number" v-model="codeValue" @focus="handlefocusInput('code')" @blur="handleblurInput('code')" class="muse-field-input" />
+                    <div class="muse-input-border-line">
+                      <div class="border-line"></div>
+                      <div class="muse-input-focus-line"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mu-form-item">
+                <span class="color999" style="font-size:12px">验证手机号并使用一个身份进行文章转载，方便在文章中展示你的个人信息，方便别人联系你</span>
+              </div>
+              <div class="mu-form-item">
+                <div class="item-content">
+                  <div class="mu-button">
+                    <span>取消</span>
+                  </div>
+                  <div class="mu-button-primary" @click="handleValidSubmit">
+                    <span>确认</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-2" @click.self="closeModel">
+        <div class="qg-model"  >
+          <div class="model-body-cont">
+            <p class="color999">选择一个身份进行转载</p>
+            <div class="identities-list">
+              <div class="identity-item" v-for="(item,index) in identitiesList">
+                <div class="left-avator">
+                  <img :src="item.avator" alt="" />
+                </div>
+                <div class="main-cont">
+                  <div class="base-info">
+                    <p class="user-info">
+                    <span class="username">{* item.username *}</span> &nbsp;
+                    <span class="user-position color999">{* item.position *}</span>
+                  <p>
+                  <p class="company-name lineClamp1">{* item.company *}</p>
+                  </div>
+                  <div class="qg-radio-item right-radio-item" >
+                    <label :for="'identity'+index" class="qg-radio-cont" :class="identity == item.id ? 'is-checked' : ''"></label>
+                    <input type="radio" v-model="identity" class="hidden-radio" :value="item.id" :id="'identity'+index" name="identity">
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            <div class="bottom-meta">
+                <div class="item-content">
+                  <div class="mu-button">
+                    <span>取消</span>
+                  </div>
+                  <div class="mu-button-primary" >
+                    <span>确认</span>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </transition>
+      `,
+      props: {
+        isshowloginmodel: {
+          type: Boolean,
+          default: () => false
+        }
+      },
+      delimiters: ['{*', '*}'],
+      data() {
+        const validPhoneNumber = (value) => {
+          var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+          if (!myreg.test(value)) {
+            return '手机格式不正确';
+          } else {
+            return '';
+          }
+        }
+        const validCodeNumber = (value) => {
+          if (value == '') {
+            return '验证码不能为空'
+          }
+          return '';
+        }
+        return {
+          phone: false,
+          code: false,
+          phoneError: false,
+          codeError: false,
+          phoneValue: '',
+          codeValue: '',
+          leftTime: 60,
+          isRenderSendCode: true,
+          interval: null,
+          rules: {
+            phone: [
+              {
+                validator: validPhoneNumber
+              }
+            ],
+            code: [
+              {
+                validator: validCodeNumber
+              }
+            ]
+          },
+          identity: 1,
+          identitiesList: [
+            {
+              id: 1,
+              username: '萧奇羽',
+              position: 'VP',
+              company: '军火库（北京）网络有限公司',
+              avator: 'http://pic.qnpic.top/avator/avator1.png'
+            },
+            {
+              id: 2,
+              username: '徐',
+              position: 'CEO',
+              company: '鸟不拉屎 有限公司',
+              avator: 'http://pic.qnpic.top/avator/avator2.png'
+            },
+            {
+              id: 3,
+              username: '牧尘',
+              position: 'CT',
+              company: '苍渊 有限股份公司',
+              avator: 'http://pic.qnpic.top/avator/avator3.png'
+            },
+            {
+              id: 4,
+              username: '齐宇',
+              position: 'VP',
+              company: '川建国（北京）网络有限公司',
+              avator: 'http://pic.qnpic.top/avator/avator4.png'
+            },
+            {
+              id: 5,
+              username: 'IQIYI',
+              position: 'VP',
+              company: '爱奇艺（北京）网络有限公司',
+              avator: 'http://pic.qnpic.top/avator/avator5.png'
+            },
+            {
+              id: 6,
+              username: 'Iron Man',
+              position: 'VP',
+              company: '漫威u（北京）网络有限公司',
+              avator: 'http://pic.qnpic.top/avator/avator6.png'
+            },
+            {
+              id: 7,
+              username: '老王',
+              position: 'VP',
+              company: '绿帽子（北京）网络有限公司',
+              avator: 'http://pic.qnpic.top/avator/avator7.png'
+            }
+          ]
+        }
+      },
+      watch: {
+      },
+      methods: {
+        closeModel() {
+          this.$emit('close-model')
+        },
+        handleSendCode() {
+          console.log('发送验证码')
+          this.isRenderSendCode = false
+          this.interval = setInterval(() => {
+            this.leftTime -= 1
+            if (this.leftTime == 0) {
+              this.isRenderSendCode = true
+              clearInterval(this.interval)
+              this.leftTime = 60
+            }
+          }, 1000)
+        },
+        handlefocusInput(name) {
+          this[name] = true
+        },
+        handleblurInput(name) {
+          this[name] = false
+          var text = ''
+          for (var item of this.rules[name]) {
+            text = item.validator(this[name + 'Value'])
+            if (text.length > 0) {
+              this[name + 'Error'] = true;
+              this[name + 'ErrorText'] = text; return;
+            }
+          }
+          this[name + 'ErrorText'] = text
+          this[name + 'Error'] = false;
+        },
+        handleTest() {
+          console.log(this.identity)
+        },
+        valid(rules, name) {
+          let text;
+          for (var item of rules) {
+            text = item.validator(this[name + 'Value'])
+            if (text.length > 0) {
+              this[name + 'Error'] = true;
+              this[name + 'ErrorText'] = text;
+              return false;
+            }
+          }
+          return true;
+        },
+        handleValidSubmit() {
+          for (let key of Object.keys(this.rules)) {
+            let currentRules = this.rules[key]
+            for (var item of currentRules) {
+              let text = item.validator(this[key + 'Value'])
+              if (text.length > 0) {
+                this[key + 'Error'] = true;
+                this[key + 'ErrorText'] = text;
+                break;
+              }
+            }
+          }
+          let result = Object.entries(this.rules).map(([ key, value ]) => {
+            return this.valid(value, key)
+          })
+          console.log(result)
+          // Promise.all([this.valid()]).then(values => {
+
+          // })
+        }
+      }
+    }
+
+    var bus = new Vue()
+
+    // Vue.component('comment-list', commentListComponent)
+    new Vue({
+      el: '#vue',
+      delimiters: ['{*', '*}'],
+      components: {
+        'comment-list': commentListComponent,
+        'fixed-bottom-meta': fixedBottomMeta,
+        'loginModel': loginModel
+      },
+      data: {
+        msg: 'hello vue',
+        commentList: [
+          {
+            username: '林允儿',
+            avator: 'http://qnpic.top/yoona3.jpg',
+            publish_time: '1分钟',
+            like_count: 55,
+            content: '这是一段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述',
+            replyList: []
+          },
+          {
+            username: 'Yoona',
+            avator: 'http://qnpic.top/yoona5.jpg',
+            publish_time: '1分钟',
+            like_count: 9,
+            content: '这是一段简单的段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述这是一段简单的文字描述',
+            replyList: []
+          },
+          {
+            username: '林润娥',
+            avator: 'http://qnpic.top/yoona4.jpg',
+            publish_time: '1分钟',
+            like_count: 522,
+            content: '这是一段简单简单的文字描述这是一段简单的文字描述文字描述',
+            replyList: [
+              {
+                comment_user: '笑谈',
+                commented_user: '林润娥',
+                content: '想要不考虑色彩搭配问题，其实我们完全可以入手一件白衬衫，随意搭配一件下装都不会出错。'
+              },
+              {
+                comment_user: '笑谈',
+                commented_user: '林润娥',
+                content: '想要不考虑色彩搭配问题，其实我们完全可以入手一件白衬衫，随意搭配一件下装都不会出错。'
+              },
+              {
+                comment_user: '小谭',
+                commented_user: '大谈',
+                content: '只是浅色调的色彩搭配~'
+              }
+            ]
+          }
+        ],
+        commentLikeList: [
+          {
+            username: '林润娥',
+            avator: 'http://qnpic.top/yoona4.jpg',
+            time: '2020-5-20'
+          },
+          {
+            username: 'Yoona',
+            avator: 'http://qnpic.top/yoona5.jpg',
+            time: '2020-5-21'
+          },
+          {
+            username: '林大竣',
+            avator: 'http://qnpic.top/yoona2.jpg',
+            time: '2020-5-10'
+          }
+        ],
+        isLogin: false,
+        isShowLoginModel: false,
+        isShowMask: false
+      },
+      mounted() {
+        bus.$on('submit-comment', this.handleSubmitContent)
+        bus.$on('show-mask', () => {
+          this.isShowMask = true
+        })
+        bus.$on('hidden-mask', this.handleHiddenMask)
+      },
+      methods: {
+        handleHiddenMask () {
+          this.isShowMask = false;
+        },
+        handleComment(data) {
+          console.log(data)
+          this.$refs.fixedBottomComponent.isShowCommentInput = true
+
+          this.$refs.fixedBottomComponent.reply_user = data.type == 1 ? data.item.username : data.item.comment_user
+        },
+        handleSubmitContent(content) {
+          console.log('发送评论' + content)
+          // if (this.isLogin) {
+          //   console.log(content)
+          // } else {
+          //   this.isShowLoginModel = true
+          //   this.$refs.fixedBottomComponent.isShowCommentInput = false
+          // }
+        },
+        handleCloseModel() {
+          this.isShowLoginModel = false
+        },
+        handleReprint() {
+          if (this.isLogin) {
+            console.log('转载了')
+          } else {
+            this.isShowLoginModel = true
+            this.$refs.fixedBottomComponent.isShowCommentInput = false
+          }
+        }
+      }
+    })
+  </script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+  <script>
+    $('.cureent_url').text(window.location.href)
+    $('.navigatoruserAgent').text(navigator.userAgent.toLowerCase())
+    var platform = getUserBrowser()
+    console.log(getUserBrowser())
+    function getUserBrowser() {
+
+      var platform;
+      var type; //1 微信 2.微博 3.qq 4.qq空间 5.微信朋友圈
+      var browser = {
+        version: function () {
+          var u = navigator.userAgent, app = navigator.appVersion
+          return {
+            trident: u.indexOf('Trident') > -1, //IE 内核
+            presto: u.indexOf('Presto') > -1, //opera内核
+            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
+            iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+            iPad: u.indexOf('iPad') > -1, //是否iPad
+            webApp: u.indexOf('Safari') == -1 //是否web应用程序，没有头部与底部
+          }
+        }(),
+        language: (navigator.browserLanguage || navigator.language).toLowerCase()
+      }
+      if (browser.version.mobile) {//判断是否是移动设备打开。browser代码在下面
+        var ua = navigator.userAgent.toLowerCase();//获取判断用的对象
+        //		console.log(ua)
+        if (ua.match(/MicroMessenger/i) == "micromessenger") {
+          console.log("在微信中打开")
+          type = 1
+          //在微信中打开
+          platform = "wx"
+        }
+        else if (ua.match(/WeiBo/i) == "weibo") {
+          //在新浪微博客户端打开
+          console.log("在新浪微博客户端打开")
+          type = 2
+          platform = "xl"
+        }
+        else if (ua.match(/QQ/i) == "qq") {
+          //在QQ空间打开
+          console.log("在QQ空间打开")
+          type = 3
+          platform = "qq"
+        }
+        else if (browser.version.ios) {
+          //是否在IOS浏览器打开
+          type = 6
+          console.log("是否在IOS浏览器打开")
+          platform = "iosl"
+        }
+        else if (browser.version.android) {
+          //是否在安卓浏览器打开
+          console.log("是否在安卓浏览器打开")
+          type = 6
+          platform = "adrl"
+        } else {
+          //否则就是PC浏览器打开
+          type = 6
+          console.log("否则就是PC浏览器打开")
+          platform = "pc"
+        }
+      }
+      return {
+        platform: platform,
+        type: type
+      }
+    }
+    function GetQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null) return unescape(r[2]); return null;
+    }
+    $('.code').text(GetQueryString('code'))
+    is_weixin()
+    function is_weixin() {
+      var ua = navigator.userAgent.toLowerCase();
+      var ga = GetQueryString("from");
+
+      try {
+        if (ua.match(/MicroMessenger/i) == "micromessenger" && ga.match(/timeline/i) == "timeline") {
+          platform.is_weixinpyq = true
+        } else {
+          platform.is_weixinpyq = false
+        }
+      } catch{
+        $('.platform').text(JSON.stringify(platform))
+      }
+    }
+    //alert(is_weixinpyq)
+    var current_platform = ''
+    //debugger
+    $('.platformObj').text(JSON.stringify(platform))
+
+    $('.platform').text(JSON.stringify(platform))
+
+    renderCurrentPlatform(platform.type, platform.is_weixinpyq)
+    function renderCurrentPlatform(type, is_weixinpyq) {
+      var text = ''
+      if (type == 2) {
+        text = '新浪微博'
+      } else if (type == 3) {
+        text = 'qq'
+      } else if (is_weixinpyq) {
+        text = '微信朋友'
+      } else if (type == 1) {
+        text = '微信'
+      } else {
+        text = '其他'
+      }
+      $('.current-platform').text(text)
+    }
+  </script>
+</body>
+
+</html>

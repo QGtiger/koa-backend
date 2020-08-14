@@ -3,10 +3,15 @@ const zhonghang_page = async (ctx, next) => {
 }
 
 const wx_page = async (ctx, next) => {
-  ctx.body = await render('zhonghang/commercial.html')
+  ctx.body = await ctx.render('weixin_previewimg.html')
+}
+
+const wx_pinglun_page = async (ctx, next) => {
+  ctx.body = await ctx.render('weixin/pinglun.html')
 }
 
 module.exports = {
+  'GET /view/zhonghang': zhonghang_page,
   'GET /view/wxtest': wx_page,
-  'GET /view/zhonghang1': zhonghang_page
+  'GET /view/pinglun': wx_pinglun_page
 }
