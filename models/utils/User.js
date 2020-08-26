@@ -28,7 +28,7 @@ module.exports = db.defineModel('users', {
       allowNull: true,
       get() {
         const content = this.getDataValue('aboutme')
-        console.log(content)
+        console.log(content || 'no about me')
         if (content) return content
         return this.getDataValue('name') + "'s aboutme"
       },
